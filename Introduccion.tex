@@ -1,0 +1,470 @@
+\documentclass[10pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usetheme{metropolis}
+\usepackage{booktabs}
+\usepackage[scale=2]{ccicons}
+\usepackage{pgfplots}
+\usepgfplotslibrary{dateplot}
+\usepackage{xspace}
+\usepackage{pbox}
+
+% graphics path
+\graphicspath{{./images/}}
+
+% a few macros
+\newcommand{\bi}{\begin{itemize}}
+\newcommand{\ei}{\end{itemize}}
+\newcommand{\ig}{\includegraphics}
+
+% title info
+\title{Introducción}
+\author{Miguel Ortiz - Universidad Autónoma Tomás Frías}
+\institute{Octubre 2023}
+\date{\textbf{Programación competitiva para ICPC}}
+
+% Tikz
+\usepackage{tikz}
+\usetikzlibrary{arrows,shapes}
+
+% Minted
+\usepackage{minted}
+\usemintedstyle{manni}
+\newminted{cpp}{fontsize=\footnotesize}
+
+% Graph styles
+\tikzstyle{vertex}=[circle,fill=black!50,minimum size=15pt,inner sep=0pt, font=\small]
+\tikzstyle{selected vertex} = [vertex, fill=red!24]
+\tikzstyle{edge} = [draw,thick,-]
+\tikzstyle{dedge} = [draw,thick,->]
+\tikzstyle{weight} = [font=\scriptsize,pos=0.5]
+\tikzstyle{selected edge} = [draw,line width=2pt,-,red!50]
+\tikzstyle{ignored edge} = [draw,line width=5pt,-,black!20]
+
+
+\begin{document}
+\maketitle
+
+\begin{frame}{Mi perfil}
+    \bi
+        \item Ingeniería Informática en la Universidad Mayor de San Simón
+        \item Experiencia en competencias ICPC desde 2016
+        \item Clasificado a la final mundial ICPC 2022
+        \item Experiencia dando clases de programación competitiva a estudiantes de colegio y universidad
+        \vspace{10pt}
+        \item \href{https://github.com/MickyOR/}{github.com/MickyOR}
+        \item \href{https://t.me/MickyOr}{t.me/MickyOr}
+    \ei
+\end{frame}
+
+\begin{frame}{¿Qué es la programación competitiva?}
+    \begin{columns}[T] % align columns
+        \begin{column}{.48\textwidth}
+            \bi
+                \item Es un deporte mental
+                \bi
+                    \item Deporte: \textit{Actividad física, 
+                    usualmente competitiva y organizada, 
+                    que tiene la meta de usar, mantener o mejorar 
+                    las capacidades y habilidades físicas.}
+                \ei
+                \item Se resuelven problemas lógicos
+                \item Diseño de algoritmos 
+                \item Trabajo en equipo (ICPC)
+            \ei
+        \end{column}
+
+        \hfill
+
+        \begin{column}{.48\textwidth}
+            \ig[width=\textwidth]{ICPC_team.jpg}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Ventajas}
+    \bi
+        \item Se practica programación
+        \item Se mejora el razonamiento algorítmico
+        \item Cierra la brecha entre la teoría y la practica
+        \item Más oportunidades de trabajo
+        \bi
+            \item Entrevistas de trabajo
+            \item Pasantías en empresas de software
+        \ei
+    \ei
+\end{frame}
+
+\begin{frame}{Meta del curso}
+    Dado un problema, queremos:
+    \bi
+        \item Resolverlo eficientemente, usando algoritmos y estructuras de datos
+        \item Convertir la solución a un programa
+        \item Hacerlo lo más rápido posible (bajo presión)
+        \item Hacerlo correctamente (sin bugs)
+    \ei
+\end{frame}
+
+\begin{frame}{¿Cómo lo haremos?}
+    \bi
+        \item Estudiando categorías comunes de problemas
+        \item Aprendiendo algoritmos y estructuras de datos
+        \item Aprendiendo otros conceptos importantes para resolver problemas
+        \item Practicando resolver problemas
+        \item Practicando más
+        \item ¡Practicando aún más!
+    \ei
+\end{frame}
+
+\begin{frame}{Requisitos para el curso}
+    \bi
+        \item Variables
+        \item Lectura/escritura de datos por consola
+        \item Bucles (\mintinline{cpp}|for, while|)
+        \item Condicionales (\mintinline{cpp}|if/else|)
+        \item Operadores lógicos
+        \item Operadores aritméticos
+        \item Funciones
+        \bi 
+            \item Recursividad (solo para un par de temas, no es 100\% necesario)
+        \ei
+        \item Arreglos
+    \ei
+\end{frame}
+
+\begin{frame}{Programa}
+    % \scriptsize
+    \begin{center}
+        \begin{tabular}{cl|l}
+
+            No. de clase & Fecha & Temas/actividad \\
+            \hline
+            1 & 02.10 & Introducción, análisis de complejidad, \\ 
+              &       & estructuras de datos no lineales ya implementadas \\
+            2 & 04.10 & Grafos \\
+            3 & 06.10 & Búsqueda binaria \\
+            \hline
+            4 & 09.10 & Matemáticas \\
+            5 & 11.10 & Programación dinámica \\
+            6 & 13.10 & Estructuras de datos para consultas en rangos \\
+            \hline
+        \end{tabular}
+    \end{center}
+    Horario: 20:30 - 22:30
+\end{frame}
+
+\begin{frame}{Formato}
+    \bi
+        \item Clases teóricas: 
+        \bi
+            \item Resolución de problemas del tema anterior
+            \item Explicación de temas
+        \ei
+        \item Competencias:
+        \bi
+            \item Duran 46 horas, desde el final de una clase 
+            hasta el inicio de la siguiente
+            \item Problemas relacionados con el último tema
+            \item Pueden participar individualmente o en equipos
+            \item Se puede participar de forma individual
+        \ei
+    \ei
+\end{frame}
+
+\section{Introducción a competencias}
+
+\begin{frame}{Problemas}
+    \bi
+        \item Problemas típicos en competencias de programación
+        \item Usualmente consisten de:
+            \bi
+                \item Descripción del problema
+                \item Descripción del input
+                \item Descripción del output
+                \item Ejemplo de un caso de prueba (input y output)
+                \item El tiempo límite en segundos
+                \item La memoria límite en MB o kB
+            \ei
+        \item Te dicen que escribas un programa que resuelva el problema para todos los inputs válidos
+        \item El programa no debe exceder los límites de tiempo o memoria
+    \ei
+\end{frame}
+
+\begin{frame}{Ejemplo de un problema}
+    \begin{block}{Descripcion del problema}
+    Escriba un programa que multiplique pares de enteros.
+    \end{block}
+
+    \vspace{10pt}
+
+    \begin{block}{Input}
+    El input empieza con una línea que contiene un entero $T$, donde $1\leq T \leq
+    100$, denotando el número de casos de prueba. Luego $T$ líneas siguen, cada
+    una conteniendo un caso de prueba. Cada caso de prueba consiste de dos enteros $A,B$,
+    donde $-2^{20} \leq A,B \leq 2^{20}$, separados por un espacio.
+    \end{block}
+
+    \vspace{10pt}
+
+    \begin{block}{Output}
+    Por cada caso de prueba, imprima una línea conteniendo el valor de $A\times B$.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Ejemplo de un problema}
+    \begin{center}
+        \begin{tabular}{|l|l|}
+            \hline
+            {\footnotesize Input de ejemplo} & {\footnotesize Output de ejemplo} \\
+            \hline
+            \begin{minipage}{80pt}
+\vspace{10pt}
+\ttfamily
+4\\
+3 4\\
+13 0\\
+1 8\\
+100 100\\
+            \end{minipage}
+&
+\begin{minipage}{80pt}
+\vspace{10pt}
+\ttfamily
+12\\
+0\\
+8\\
+10000\\
+\end{minipage}
+\\
+            \hline
+        \end{tabular}
+    \end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]{Ejemplo de solución}
+    \begin{minted}[fontsize=\scriptsize]{cpp}
+#include <iostream>
+using namespace std;
+
+int main() {
+    int T;
+    cin >> T;
+
+    for (int t = 0; t < T; t++) {
+
+        int A, B;
+        cin >> A >> B;
+
+        cout << A * B << endl;
+    }
+
+    return 0;
+}
+\end{minted}
+
+    \bi
+        \onslide<2->{\item ¿La solución es correcta? \onslide<5->{\alert{¡No!}}}
+        \onslide<3->{\item ¿Y si $A = B = 2^{20}$? \onslide<4->{El output es $0$...}}
+    \ei
+\end{frame}
+
+\begin{frame}[fragile]{Ejemplo de solución}
+    \bi
+        \item Cuando $A = B = 2^{20}$, la respuesta debería ser $2^{40}$
+        \onslide<2->{\item Muy grande para un entero de 32 bits, overflow}
+        \onslide<3->{\item Un entero de 64 debería ser suficiente}
+    \ei
+\end{frame}
+
+\begin{frame}[fragile]{Ejemplo de solución}
+    \begin{minted}[fontsize=\scriptsize]{cpp}
+#include <iostream>
+using namespace std;
+
+int main() {
+    int T;
+    cin >> T;
+
+    for (int t = 0; t < T; t++) {
+
+        long long A, B;
+        cin >> A >> B;
+
+        cout << A * B << endl;
+    }
+
+    return 0;
+}
+\end{minted}
+
+    \bi
+    \onslide<2->{\item ¿La solución es correcta? \onslide<3->{{\alert{¡Si!}}}}
+    \ei
+\end{frame}
+
+\begin{frame}[fragile]{Errores comunes}
+    \begin{minted}[fontsize=\scriptsize]{cpp}
+#include <iostream>
+using namespace std;
+
+int main() {
+    int T;
+    cout << "Ingrese el numero de casos de prueba: ";
+    cin >> T;
+
+    for (int t = 0; t < T; t++) {
+
+        long long A, B;
+        cout << "Ingrese dos enteros: ";
+        cin >> A >> B;
+
+        // Verificar limites -2^20 <= A, B <= 2^20
+        if (-(1<<20) <= A && A <= (1<<20) &&
+            -(1<<20) <= B && B <= (1<<20)) {
+
+            cout << "La respuesta es: "; 
+            cout << A * B << endl;
+        }
+    }
+
+    return 0;
+}
+\end{minted}
+
+\end{frame}
+
+\begin{frame}{Jueces virtuales}
+    \bi
+        \item De los jueces más populares:
+        \bi
+            \item \alert{Codeforces}
+            \item \alert{AtCoder}
+            \item \alert{Kattis}
+            \item \alert{Online Judge (ex UVa)}
+        \ei
+        \item Se envían las soluciones a los jueces virtuales y se obtiene feedback de inmediato
+        \item Se puede enviar en cualquier lenguaje soportado:
+            \bi
+                \item C
+                \item C++
+                \item Java
+                \item Python 2
+                \item Python 3
+                \item C\#{}
+                \item y otros
+            \ei
+    \ei
+\end{frame}
+
+\begin{frame}{Veredictos}
+    \bi
+        \item El feedback sobre las soluciones es limitado
+        \item Usualmente se recibe alguno de los siguientes veredictos:
+            \bi
+                \item Accepted
+                \item Wrong Answer
+                \item Compile Error
+                \item Run Time Error
+                \item Time Limit Exceeded
+                \item Memory Limit Exceeded
+            \ei
+
+        \item No se revela cuáles son los casos de prueba que se usan para probar la solución
+    \ei
+\end{frame}
+
+\section{Tips para competencias}
+
+\begin{frame}{Escribir más rápido}
+    \bi
+        \item Buenos competidores tienen soluciones simples; no tienen que escribir tanto, pero es importante escribir rápido
+        \item A veces es inevitable tener que escribir mucho código
+        \vspace{15pt}
+        \item Typing.com tiene un curso de mecanografía gratuito:
+        \item \textbf{https://www.typing.com/student/lessons}
+        \vspace{15pt}
+        \item TypeRacer es una forma divertida y efectiva de practicar:
+        \item \textbf{https://play.typeracer.com/}
+        \vspace{15pt}
+        \item Monketype es una alternativa con más opciones de configuración:
+        \item \textbf{https://monkeype.com/}
+    \ei
+\end{frame}
+
+\begin{frame}{Análisis de algoritmos}
+    \bi
+        \item Al resolver un problema, nuestra solución debe ser lo suficientemente rápida y no puede usar demasiada memoria
+        \item También queremos que nuestra solución sea lo más simple posible
+        \vspace{5pt}
+        \item Debemos analizar el algoritmo para determinar si una solución se ejecutará dentro del tiempo límite
+        \item Regla general: $10^{8}$ operaciones por segundo
+        \vspace{10pt}
+        \item<2-> Queremos ordenar $n \leq 10^{6}$ enteros, y tenemos 3 segundos.
+            \bi
+                \item ¿Podemos usar un simple bubble sort? $O(n^2)$
+                \item ¿Qué hay de un merge sort? $O(n\log n)$
+            \ei
+        \vspace{5pt}
+        \item<3-> Queremos ordenar $n \leq 10^{3}$ enteros, y tenemos 3 segundos.
+            \bi
+                \item ¿Podemos usar un simple bubble sort? $O(n^2)$
+            \ei
+        \vspace{5pt}
+        \item<4-> Siempre ir por la solución más simple que no sobrepase el tiempo límite
+    \ei
+\end{frame}
+
+\begin{frame}{Análisis de algoritmos}
+    \bi
+        \item A veces no estás seguro si tu solución es correcta
+        \item ¡Intenta \textit{demostrar} su correctitud!
+        \item Incluso si no logras demostrarlo o desmentirlo, probablemente tendrás una mejor comprensión del problema
+        \vspace{20pt}
+        \item Libro gratuito sobre demostraciones: \alert{\href{https://www.people.vcu.edu/~rhammack/BookOfProof/}{Book of Proof}}
+    \ei
+\end{frame}
+
+\begin{frame}{Aprende tu lenguaje de programación}
+    \bi
+        \item Lo \textit{ideal} es conocer el lenguaje de programación como la palma de tu mano
+        \item Esto incluye sus librerías:
+            \bi
+                \item C++ --- Standard Template Library
+                \item Java --- Class Library
+            \ei
+        \item Si el lenguaje ya lo tiene implementado, no es necesario hacerlo de nuevo
+    \ei
+\end{frame}
+
+\begin{frame}{Prueba tu solución}
+    \bi
+        \item Verificar que la solución es correcta y que corre dentro del tiempo límite 
+        \item O ver que no es correcta aunque no sepas por qué
+        \vspace{10pt}
+        \item \textbf{Trata de romper tu solución} encontrando un contraejemplo 
+        (una entrada para la cual tu solución da una salida incorrecta, 
+        o tarda demasiado en calcular una respuesta)
+        \item Trata con casos borde, input grande, etc.
+    \ei
+\end{frame}
+
+\begin{frame}{Práctica y más práctica}
+    \bi
+        \item La habilidad de resolver problemas viene con la práctica
+        \item Muchas veces se resuelven problemas encontrando patrones (el problema es similar a otro que ya resolviste)
+        \item Muchos jueces online tienen problemas de competencias pasadas
+        \item Algunos de estos jueces organizan competencias frecuentemente
+        \item Codeforces, AtCoder, Codechef, LeetCode, TopCoder, etc.
+    \ei
+\end{frame}
+
+\begin{frame}{Formato de competencias}
+    \bi
+        \item Contests duran 2 días 
+        \item Participación individual o en equipo
+        \item Necesitan una cuenta en \alert{\href{https://vjudge.net}{vjudge.net}}
+    \ei
+\end{frame}
+
+\end{document}

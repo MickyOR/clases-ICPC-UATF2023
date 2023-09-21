@@ -1,0 +1,275 @@
+\documentclass[10pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usetheme{metropolis}
+\usepackage{booktabs}
+\usepackage[scale=2]{ccicons}
+\usepackage{pgfplots}
+\usepgfplotslibrary{dateplot}
+\usepackage{xspace}
+\usepackage{pbox}
+
+% graphics path
+\graphicspath{{./images/}}
+
+% a few macros
+\newcommand{\bi}{\begin{itemize}}
+\newcommand{\ei}{\end{itemize}}
+\newcommand{\ig}{\includegraphics}
+
+% title info
+\title{Estructuras de datos}
+\author{Miguel Ortiz}
+\institute{Abril 2023 - Cochabamba, Bolivia}
+\date{\textbf{Programación competitiva para ICPC}}
+
+% Tikz
+\usepackage{tikz}
+\usetikzlibrary{arrows,shapes}
+
+% Minted
+\usepackage{minted}
+\usemintedstyle{manni}
+\newminted{cpp}{fontsize=\footnotesize}
+
+% Graph styles
+\tikzstyle{vertex}=[circle,fill=black!50,minimum size=15pt,inner sep=0pt, font=\small]
+\tikzstyle{selected vertex} = [vertex, fill=red!24]
+\tikzstyle{edge} = [draw,thick,-]
+\tikzstyle{dedge} = [draw,thick,->]
+\tikzstyle{weight} = [font=\scriptsize,pos=0.5]
+\tikzstyle{selected edge} = [draw,line width=2pt,-,red!50]
+\tikzstyle{ignored edge} = [draw,line width=5pt,-,black!20]
+
+
+\begin{document}
+\maketitle
+
+\begin{frame}{Introducción}
+    \bi
+        \item Una estructura de datos es una forma de almacenar datos en una computadora
+        \item Es importante elegir la estructura de datos apropiada para cada problema
+        \item Estructuras de datos sofisticadas y poderosas ya están implementadas en los lenguajes más populares
+        \item Veremos algunas de las más importantes presentes en C++
+    \ei
+\end{frame}
+
+\begin{frame}[fragile]{Arreglos dinámicos}
+  \bi
+    \item Un arreglo dinámico puede cambiar su tamaño durante la ejecución del programa
+    \item \mintinline{cpp}|vector| en C++
+    \item Puede usarse casi como un arreglo normal
+  \ei
+\end{frame}
+
+\begin{frame}[fragile]{Arreglos dinámicos}
+  Crear un vector vacío y añadir elementos:
+  \begin{minted}[]{cpp}
+    #include <vector>
+    ...
+    vector<int> v;
+    v.push_back(3); // [3]
+    v.push_back(2); // [3, 2]
+    v.push_back(5); // [3, 2, 5]
+  \end{minted}
+  \onslide<2->{
+    Se puede acceder a los elementos como en un arreglo normal:
+  }
+  \onslide<2->\begin{minted}[]{cpp}
+    cout << v[0] << '\n'; // 3
+    cout << v[1] << '\n'; // 2
+    cout << v[2] << '\n'; // 5
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Arreglos dinámicos}
+  La función \mintinline{cpp}|size| devuelve el tamaño del vector:
+  \begin{minted}[]{cpp}
+    for (int i = 0; i < v.size(); i++) {
+      cout << v[i] << " ";
+    }
+    // 3 2 5
+  \end{minted}
+  Una forma más corta de iterar sobre los elementos:
+  \begin{minted}[]{cpp}
+    for (auto x : v) {
+      cout << x << " ";
+    }
+    // 3 2 5
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Arreglos dinámicos}
+  Inicializar un vector con 5 elementos:
+  \begin{minted}[]{cpp}
+    vector<int> v = {3,2,5,1,4};
+  \end{minted}
+  También se puede inicializar con un tamaño y un valor en cada posición:
+  \begin{minted}[]{cpp}
+    // tamaño 10, lleno de 0s
+    vector<int> v(10); 
+  \end{minted}
+  \begin{minted}[]{cpp}
+    // tamaño 10, lleno de -1s
+    vector<int> v(10, -1); 
+  \end{minted}
+  \begin{minted}[]{cpp}
+    // tamaño 5, lleno de vectores vacios
+    vector<vector<int>> v(5, vector<int>()); 
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Arreglos dinámicos}
+  Otras funciones:
+  \bi
+    \item \mintinline{cpp}|v.pop_back()|: elimina el último elemento
+    \item \mintinline{cpp}|v.resize(n)|: cambia el tamaño del vector a $n$
+    \item \mintinline{cpp}|v.assign(n, val)|: cambia el tamaño del vector a $n$ y llena todas las posiciones con $val$
+    \item \mintinline{cpp}|v.clear()|: elimina todos los elementos del vector
+  \ei
+  Ordenar un vector:
+  \begin{minted}[]{cpp}
+    #include <algorithm>
+    ...
+    sort(v.begin(), v.end());
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Arreglos dinámicos}
+  \bi
+  \item Un \mintinline{cpp}|string| también es un arreglo dinámico
+  \item Almacena caracteres y tiene funciones para manipularlos
+  \ei
+  \begin{minted}[]{cpp}
+    string a = "abc";
+    string b = a + a;
+    cout << b << '\n'; // abcabc
+    b[2] = 'x';
+    cout << b << '\n'; // abxabc
+    string c = b.substr(2, 3);
+    cout << c << '\n'; // xab
+    c.pop_back();
+    cout << c << '\n'; // xa
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Conjuntos}
+  \bi
+    \item Un \mintinline{cpp}|set| es una estructura de datos que almacena un conjunto de elementos (sin repeticiones)
+    \item Se puede insertar y eliminar elementos, y verificar si un elemento está en el conjunto
+    \item C++ tiene dos tipos de sets: \mintinline{cpp}|set| y \mintinline{cpp}|unordered_set|
+    \item \mintinline{cpp}|set| está implementado como un árbol binario de búsqueda balanceado (operaciones en $O(\log n)$)
+    \item \mintinline{cpp}|set| mantiene los elementos ordenados
+    \item \mintinline{cpp}|unordered_set| está implementado como una tabla de hash (operaciones en $O(1)$ en promedio)
+  \ei
+\end{frame}
+
+\begin{frame}[fragile]{Conjuntos}
+  \bi
+    \item La función \mintinline{cpp}|insert| añade un elemento al conjunto
+    \item La función \mintinline{cpp}|count| devuelve el número de ocurrencias de un elemento en el conjunto (0 o 1)
+    \item La función \mintinline{cpp}|erase| elimina un elemento del conjunto
+  \ei
+  \begin{minted}[]{cpp}
+    #include <set>
+    ...
+    set<int> s;
+    s.insert(3);
+    s.insert(2);
+    s.insert(5);
+    s.insert(3); // no se inserta
+    cout << s.count(3) << '\n'; // 1
+    cout << s.count(4) << '\n'; // 0
+    s.erase(3);
+    cout << s.count(3) << '\n'; // 0
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Conjuntos}
+  \bi
+    \item A diferencia de los vectores, no se puede acceder a los elementos de un conjunto por su índice
+    \item Se puede iterar sobre los elementos de un conjunto de forma similar
+    \item Función \mintinline{cpp}|size| devuelve el número de elementos en el conjunto
+  \ei
+  \begin{minted}[]{cpp}
+    set<int> s = {2, 5, 6, 8};
+    cout << s.size() << '\n'; // 4
+    for (auto x : s) {
+      cout << x << " ";
+    }
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Conjuntos}
+  \bi
+    \item C++ también contiene \mintinline{cpp}|multiset| y \mintinline{cpp}|unordered_multiset|
+    \item La única diferencia es que permiten elementos repetidos
+  \ei
+  \begin{minted}[]{cpp}
+    multiset<int> s;
+    s.insert(5);
+    s.insert(5);
+    s.insert(5);
+    cout << s.count(5) << '\n'; // 3
+  \end{minted}
+  \bi
+    \item Se debe tener cuidado si solo se quiere eliminar un elemento
+  \ei
+  \begin{minted}[]{cpp}
+    s.erase(s.find(5));
+    cout << s.count(5) << '\n'; // 2
+    s.erase(5);
+    cout << s.count(5) << '\n'; // 0
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Mapas}
+  \bi
+    \item Un \mintinline{cpp}|map| es una estructura de datos que almacena pares de elementos (llave, valor)
+    \item En un arreglo se accede a los elementos por su índice, en un mapa se accede por su llave
+    \item La llave puede ser de cualquier tipo
+    \item Hay dos implementaciones de mapas: \mintinline{cpp}|map| y \mintinline{cpp}|unordered_map|
+    \item Un \mintinline{cpp}|map| está implementado como un árbol binario de búsqueda balanceado (operaciones en $O(\log n)$)
+    \item \mintinline{cpp}|map| mantiene los elementos ordenados por su llave
+    \item \mintinline{cpp}|unordered_map| está implementado como una tabla de hash (operaciones en $O(1)$ en promedio)
+  \ei
+\end{frame}
+
+\begin{frame}[fragile]{Mapas}
+  \bi
+    \item Se añaden elementos usando la llave como si ya existiera en el mapa
+    \item Si se intenta acceder a un elemento que no existe, se crea un nuevo elemento con valor por defecto (0 para enteros)
+  \ei
+  \begin{minted}[]{cpp}
+    #include <map>
+    ...
+    map<string, int> m;
+    m["mono"] = 3;
+    m["gato"] = 5;
+    m["cuaderno"] = 2;
+    cout << m["mono"] << '\n'; // 3
+    cout << m["tecla"] << '\n'; // 0
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Mapas}
+  \bi
+    \item La función \mintinline{cpp}|count| devuelve el número de ocurrencias de una llave en el mapa (0 o 1)
+    \item La función \mintinline{cpp}|erase| elimina un elemento del mapa
+    \item Se puede iterar sobre los elementos de un mapa de forma similar a un \mintinline{cpp}|set|
+  \ei
+  \begin{minted}[]{cpp}
+    if (m.count("tecla")) {
+      // llave existe
+    }
+    m.erase("mono");
+    for (auto p : m) {
+      cout << p.first << " " << p.second << '\n';
+    }
+    // cuaderno 2
+    // gato 5
+    // tecla 0
+  \end{minted}
+\end{frame}
+
+\end{document}

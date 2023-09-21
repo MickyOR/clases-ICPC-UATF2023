@@ -1,0 +1,338 @@
+\documentclass[10pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usetheme{metropolis}
+\usepackage{booktabs}
+\usepackage[scale=2]{ccicons}
+\usepackage{pgfplots}
+\usepgfplotslibrary{dateplot}
+\usepackage{xspace}
+\usepackage{pbox}
+
+% graphics path
+\graphicspath{{./images/}}
+
+% a few macros
+\newcommand{\bi}{\begin{itemize}}
+\newcommand{\ei}{\end{itemize}}
+\newcommand{\ig}{\includegraphics}
+
+% title info
+\title{Análisis de complejidad computacional --- Complejidad de tiempo}
+\author{Miguel Ortiz}
+\institute{Abril 2023 - Cochabamba, Bolivia}
+\date{\textbf{Programación competitiva para ICPC}}
+
+% Tikz
+\usepackage{tikz}
+\usetikzlibrary{arrows,shapes}
+
+% Minted
+\usepackage{minted}
+\usemintedstyle{manni}
+\newminted{cpp}{fontsize=\footnotesize}
+
+% Graph styles
+\tikzstyle{vertex}=[circle,fill=black!50,minimum size=15pt,inner sep=0pt, font=\small]
+\tikzstyle{selected vertex} = [vertex, fill=red!24]
+\tikzstyle{edge} = [draw,thick,-]
+\tikzstyle{dedge} = [draw,thick,->]
+\tikzstyle{weight} = [font=\scriptsize,pos=0.5]
+\tikzstyle{selected edge} = [draw,line width=2pt,-,red!50]
+\tikzstyle{ignored edge} = [draw,line width=5pt,-,black!20]
+
+
+\begin{document}
+\maketitle
+
+\begin{frame}{Introducción}
+    \bi
+        \item El análisis de complejidad mide la cantidad de recursos que utiliza un algoritmo
+        \item La eficiencia de algoritmos es \textit{muy} importante en competencias de programación
+    \ei
+\end{frame}
+
+\begin{frame}{Complejidad de tiempo}
+    \bi
+        \item Para motivos prácticos, estima el tiempo que demora un algoritmo en función al tamaño de la entrada
+        \item Regla general: $10^8$ operaciones por segundo
+    \ei
+\end{frame}
+
+\section{Notación Big O}
+
+\begin{frame}{Notación Big O}
+    Sea $T(n)$ una función; dada otra función $f(n)$, se dice que $T(n)$ es 
+    $O(f(n))$ si existen constantes $c > 0$ y $n_0 \geq 0$, tales que para todo $n \geq n_0$ 
+    se tenga $T(n) \leq c \cdot f(n)$
+\end{frame}
+
+\begin{frame}{Notación Big O}
+  \bi
+    \item $O(...) \rightarrow$ "$O$ de ..." 
+    \item ... $\rightarrow$ expresión matemática. Ej.: $n, n^2, n+m, n2^n$
+    \item <2-> Digamos $O(n^2)$. Reemplazamos $n$ por su valor máximo en el problema
+    \item <2-> $n \leq 10^5 \rightarrow n^2 = 10^{10} \leftarrow$ cantidad aproximada de operaciones 
+    \item <3-> ¿Es eficiente?
+  \ei
+\end{frame}
+
+\begin{frame}{Notación Big O}
+  \bi
+    \item $X \leftarrow$ Cantidad aproximada de operaciones
+    \vspace{10pt}
+    \item $X \leq 10^7 \rightarrow$ Probablemente sea \textcolor{teal}{\underline{rápido}}
+    \vspace{10pt}
+    \item $X \approx 10^8 \rightarrow$ Zona de peligro
+    \vspace{10pt}
+    \item $X \geq 10^9 \rightarrow$ Probablemente sea muy \textcolor{red}{\underline{lento}}
+  \ei
+\end{frame}
+
+\begin{frame}[fragile]{Notación Big O -- Operaciones simples}
+  \begin{minted}[]{cpp}
+    int n;
+    cin >> n;
+    int respuesta = n+1;
+    cout << respuesta << '\n';
+  \end{minted}
+  \bi
+    \item Cantidad constante de operaciones $\rightarrow O(1)$
+    \item Si $n = 10^5$, el código de arriba sigue siendo $O(1)$
+  \ei
+\end{frame}
+
+\begin{frame}[fragile]{Notación Big O -- Ciclos}
+  \begin{minted}[]{cpp}
+    for (int i = 1; i <= n; ++i) {
+      // Código O(1)
+    }
+  \end{minted}
+  \bi
+    \item \textit{Código} se realiza $n$ veces $\rightarrow O(n)$
+  \ei
+\end{frame}
+
+\begin{frame}[fragile]{Notación Big O -- Ciclos}
+  \begin{minted}[]{cpp}
+    for (int i = 1; i <= n; ++i) {
+      for (int j = 1; j <= n; ++j) {
+        // Código O(1)
+      }
+    }
+  \end{minted}
+  \bi
+    \item \textit{Código} se realiza $n \times n$ veces $\rightarrow O(n^2)$
+    \item <2-> Regla general: si hay $k$ ciclos anidados, la complejidad es $O(n^k)$
+  \ei
+\end{frame}
+
+\begin{frame}[fragile]{Notación Big O -- Orden de magnitud}
+  \begin{minted}[]{cpp}
+    for (int i = 1; i <= 3*n; ++i) {
+      // Código O(1)
+    }
+  \end{minted}
+  \bi
+    \item Realiza $3n$ operaciones
+    \item <2-> $O(n)$
+  \ei
+\end{frame}
+
+\begin{frame}[fragile]{Notación Big O -- Orden de magnitud}
+  \begin{minted}[]{cpp}
+    for (int i = 1; i <= n+5; ++i) {
+      // Código O(1)
+    }
+  \end{minted}
+  \bi
+    \item Realiza $n+5$ operaciones
+    \item <2-> $O(n)$
+  \ei
+\end{frame}
+
+\begin{frame}[fragile]{Notación Big O -- Orden de magnitud}
+  \begin{minted}[]{cpp}
+    for (int i = 1; i <= n; i += 2) {
+      // Código O(1)
+    }
+  \end{minted}
+  \bi
+    \item Realiza $n/2$ operaciones
+    \item <2-> $O(n)$
+  \ei
+\end{frame}
+
+\begin{frame}[fragile]{Notación Big O -- Fases}
+  \begin{minted}[]{cpp}
+    for (int i = 1; i <= n; ++i) {
+      // Código O(1)
+    }
+    for (int i = 1; i <= n; ++i) {
+      for (int j = 1; j <= n; ++j) {
+        // Código O(1)
+      }
+    }
+    for (int i = 1; i <= n; ++i) {
+      // Código O(1)
+    }
+  \end{minted}
+  \bi
+    \item $O(n + n^2 + n)$
+    \item <2-> $O(n^2)$
+  \ei
+\end{frame}
+
+\begin{frame}[fragile]{Notación Big O -- Más de una variable}
+  \begin{minted}[]{cpp}
+    for (int i = 1; i <= n; ++i) {
+      for (int j = 1; j <= m; ++j) {
+        // Código O(1)
+      }
+    }
+  \end{minted}
+  \bi
+    \item Realiza $n \times m$ operaciones $\rightarrow O(nm)$
+  \ei
+\end{frame}
+
+\begin{frame}{Notación Big O -- Recomendación}
+  \begin{center}
+    Siempre calculen la complejidad de sus soluciones
+  \end{center}
+\end{frame}
+
+\section{Ejercicios}
+
+\begin{frame}[fragile]{Ejercicios}
+  \begin{minted}[]{cpp}
+    int a = 1, b = 2;
+    int c = a + b;
+  \end{minted}
+  \bi
+    \item Complejidad: \onslide<2-> $O(1)$
+  \ei
+\end{frame}
+
+\begin{frame}[fragile]{Ejercicios}
+  \begin{minted}[]{cpp}
+    int n;
+    cin >> n
+    int res = 0;
+    for (int i = 0; i < n; ++i) {
+      res = res + i;
+    }
+    cout << res << endl;
+  \end{minted}
+  \bi
+    \item Complejidad: \onslide<2-> $O(n)$
+  \ei
+\end{frame}
+
+\begin{frame}[fragile]{Ejercicios}
+  \begin{minted}[]{cpp}
+    int n;
+    cin >> n
+    int res = 0;
+    for (int i = 0; i < n; ++i) {
+      for (int j = 0; j < n; ++j) {
+        res = res + i*j;
+      }
+    }
+    cout << res << endl;
+  \end{minted}
+  \bi
+    \item Complejidad: \onslide<2-> $O(n^2)$
+  \ei
+\end{frame}
+
+\begin{frame}[fragile]{Ejercicios}
+  \begin{minted}[]{cpp}
+    int n;
+    cin >> n
+    int res = 0;
+    for (int i = 0; i < 3*n; ++i) {
+      res = res + i%3;
+    }
+    cout << res << endl;
+  \end{minted}
+  \bi
+    \item Complejidad: \onslide<2-> $O(n)$
+  \ei
+\end{frame}
+
+\begin{frame}[fragile]{Ejercicios}
+  \begin{minted}[]{cpp}
+    int n;
+    cin >> n
+    int res = 0;
+    for (int i = 0; i < n; ++i) {
+      for (int j = 0; j < n; ++j) {
+        res = res - i*j;
+      }
+      for (int j = 0; j < n; ++j) {
+        for (int k = 0; k < n; ++k) {
+          res = res + i*(j - k);
+        }
+      }
+    }
+    cout << res << endl;
+  \end{minted}
+  \bi
+    \item Complejidad: \onslide<2-> $O(n \times (n + n^2))$ \onslide<3-> $\rightarrow O(n^3)$
+  \ei
+\end{frame}
+
+\begin{frame}[fragile]{Ejercicios}
+  \begin{minted}[]{cpp}
+    int n;
+    cin >> n
+    int res = 0;
+    for (int i = 0; i < n; ++i) {
+      for (int j = i; j < n; ++j) {
+        res++;
+      }
+    }
+    cout << res << endl;
+  \end{minted}
+  \bi
+    \item Complejidad: \onslide<2-> $O(\frac{n(n+1)}{2})$ \onslide<3-> $\rightarrow O(n^2)$
+  \ei
+\end{frame}
+
+\begin{frame}[fragile]{Ejercicios}
+  \begin{minted}[]{cpp}
+    vector<int> v;
+    v.push_back(2023);
+  \end{minted}
+  \bi
+    \item Complejidad: \onslide<2-> $O(1)$
+  \ei
+\end{frame}
+
+\begin{frame}[fragile]{Ejercicios}
+  \begin{minted}[]{cpp}
+    set<int> s;
+    s.insert(2023);
+  \end{minted}
+  \bi
+    \item Complejidad: \onslide<2-> $O(\log_2 n) \rightarrow O(\log n)$
+  \ei
+\end{frame}
+
+\begin{frame}[fragile]{Ejercicios}
+  \begin{minted}[]{cpp}
+    int n;
+    cin >> n;
+    set<int> s;
+    for (int i = 0; i < n; ++i) {
+      s.insert((2*i + i/3) % n);
+    }
+    cout << s.size() << endl;
+  \end{minted}
+  \bi
+    \item Complejidad: \onslide<2-> $O(n \log n)$
+  \ei
+\end{frame}
+
+\end{document}
