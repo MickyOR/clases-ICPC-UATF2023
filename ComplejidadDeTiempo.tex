@@ -20,7 +20,7 @@
 % title info
 \title{Análisis de complejidad computacional --- Complejidad de tiempo}
 \author{Miguel Ortiz}
-\institute{Abril 2023 - Cochabamba, Bolivia}
+\institute{Octubre 2023}
 \date{\textbf{Programación competitiva para ICPC}}
 
 % Tikz
@@ -72,7 +72,7 @@
     \item $O(...) \rightarrow$ "$O$ de ..." 
     \item ... $\rightarrow$ expresión matemática. Ej.: $n, n^2, n+m, n2^n$
     \item <2-> Digamos $O(n^2)$. Reemplazamos $n$ por su valor máximo en el problema
-    \item <2-> $n \leq 10^5 \rightarrow n^2 = 10^{10} \leftarrow$ cantidad aproximada de operaciones 
+    \item <2-> $n \leq 10^5 \rightarrow n^2 = \boxed{10^{10}} \leftarrow$ cantidad aproximada de operaciones 
     \item <3-> ¿Es eficiente?
   \ei
 \end{frame}
@@ -81,7 +81,7 @@
   \bi
     \item $X \leftarrow$ Cantidad aproximada de operaciones
     \vspace{10pt}
-    \item $X \leq 10^7 \rightarrow$ Probablemente sea \textcolor{teal}{\underline{rápido}}
+    \item $X \leq 10^7 \rightarrow$ Probablemente se suficientemente \textcolor{teal}{\underline{rápido}}
     \vspace{10pt}
     \item $X \approx 10^8 \rightarrow$ Zona de peligro
     \vspace{10pt}
@@ -93,7 +93,7 @@
   \begin{minted}[]{cpp}
     int n;
     cin >> n;
-    int respuesta = n+1;
+    long long respuesta = (long long)n * (n-1) / 2;
     cout << respuesta << '\n';
   \end{minted}
   \bi
@@ -123,7 +123,7 @@
   \end{minted}
   \bi
     \item \textit{Código} se realiza $n \times n$ veces $\rightarrow O(n^2)$
-    \item <2-> Regla general: si hay $k$ ciclos anidados, la complejidad es $O(n^k)$
+    \item <2-> Regla general: si hay $k$ ciclos \textbf{anidados}, la complejidad es $O(n^k)$
   \ei
 \end{frame}
 
@@ -297,6 +297,23 @@
   \end{minted}
   \bi
     \item Complejidad: \onslide<2-> $O(\frac{n(n+1)}{2})$ \onslide<3-> $\rightarrow O(n^2)$
+  \ei
+\end{frame}
+
+\begin{frame}[fragile]{Ejercicios}
+  \begin{minted}[]{cpp}
+    int n;
+    cin >> n
+    int res = 0;
+    for (int i = 0; i < n; ++i) {
+      for (int j = 0; j < 8; ++j) {
+        res++;
+      }
+    }
+    cout << res << endl;
+  \end{minted}
+  \bi
+    \item Complejidad: \onslide<2-> $O(n)$
   \ei
 \end{frame}
 
