@@ -52,7 +52,7 @@ signed main() {
   int n;
   cin >> n;
   string a[n];
-  set<string> words;
+  unordered_set<string> words;
   bool fairGame = true;
   for (int i = 0; i < n; i++) {
     cin >> a[i];

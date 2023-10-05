@@ -52,7 +52,7 @@ signed main() {
   int n, m;
   while (cin >> n >> m) {
     if (n == 0 && m == 0) break;
-    set<int> jack, jill;
+    unordered_set<int> jack, jill;
     for (int i = 0; i < n; i++) {
       int x;
       cin >> x;
