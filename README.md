@@ -8,4 +8,5 @@ Además de los archivos .tex o .pptx de las presentaciones.
 |Día|Presentaciones|Contest|Soluciones|
 |---|---|---|---|
 |02-10-2023| [Introducción](https://github.com/MickyOR/clases-ICPC-UATF2023/blob/main/Introduccion.pdf), [Análisis de complejidad](https://github.com/MickyOR/clases-ICPC-UATF2023/blob/main/ComplejidadDeTiempo.pdf), [Estructuras de datos ya implementadas](https://github.com/MickyOR/clases-ICPC-UATF2023/blob/main/EstructurasDeDatos.pdf)|[Contest STL](https://vjudge.net/contest/585295)|[Soluciones STL](https://github.com/MickyOR/clases-ICPC-UATF2023/tree/main/CodigoAuxiliar/ContestSTL)
-|04-10-2023| [Grafos (DFS y BFS)](https://github.com/MickyOR/clases-ICPC-UATF2023/blob/main/DFS%20y%20BFS.pdf)| [Contest Grafos](https://vjudge.net/contest/585769)|[Soluciones Grafos](https://github.com/MickyOR/clases-ICPC-UATF2023/blob/main)
+|04-10-2023| [Grafos (DFS y BFS)](https://github.com/MickyOR/clases-ICPC-UATF2023/blob/main/DFS%20y%20BFS.pdf)| [Contest Grafos](https://vjudge.net/contest/585769)|[Soluciones Grafos](https://github.com/MickyOR/clases-ICPC-UATF2023/tree/main/CodigoAuxiliar/ContestGrafos)
+|06-10-2023| [Búsqueda binaria](https://github.com/MickyOR/clases-ICPC-UATF2023/blob/main/BusquedaBinaria.pdf)| [Contest Busqueda Binaria](https://vjudge.net/contest/586203)|
