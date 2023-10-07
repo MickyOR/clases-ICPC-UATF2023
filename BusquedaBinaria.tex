@@ -1,0 +1,410 @@
+\documentclass[10pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usetheme{metropolis}
+\usepackage{booktabs}
+\usepackage[scale=2]{ccicons}
+\usepackage{pgfplots}
+\usepgfplotslibrary{dateplot}
+\usepackage{xspace}
+\usepackage{pbox}
+\usepackage[normalem]{ulem}
+
+% graphics path
+\graphicspath{{./images/}}
+
+% a few macros
+\newcommand{\bi}{\begin{itemize}}
+\newcommand{\ei}{\end{itemize}}
+\newcommand{\ig}{\includegraphics}
+\newcommand{\x}{\color{red}{$\times$}}
+\definecolor{hilight}{RGB}{235,129,27}
+\definecolor{vhilight}{RGB}{235,129,27}
+
+% title info
+\title{Búsqueda binaria}
+\author{Miguel Ortiz}
+\institute{Octubre 2023}
+\date{\textbf{Programación competitiva para ICPC}}
+
+% Tikz
+\usepackage{tikz}
+\usetikzlibrary{arrows,shapes}
+
+% Minted
+\usepackage{minted}
+\usemintedstyle{manni}
+\newminted{cpp}{fontsize=\footnotesize}
+
+% Graph styles
+\tikzstyle{vertex}=[circle,fill=black!50,minimum size=15pt,inner sep=0pt, font=\small]
+\tikzstyle{selected vertex} = [vertex, fill=red!24]
+\tikzstyle{edge} = [draw,thick,-]
+\tikzstyle{dedge} = [draw,thick,->]
+\tikzstyle{weight} = [font=\scriptsize,pos=0.5]
+\tikzstyle{selected edge} = [draw,line width=2pt,-,red!50]
+\tikzstyle{ignored edge} = [draw,line width=5pt,-,black!20]
+
+
+\begin{document}
+\maketitle
+
+\begin{frame}{Problema de ejemplo}
+  Dado un arreglo \textbf{ordenado} de enteros, indicar si contiene un elemento \textbf{$val$} o no.
+  \vspace{20pt}
+
+  \onslide<2->{Algoritmo:}
+  \bi
+    \item<2-> Revisamos el elemento del medio
+    \bi
+      \item<2-> Si es $val$, terminamos
+      \item<2-> Si es mayor que $val$, buscamos en la mitad izquierda
+      \item<2-> Si es menor que $val$, buscamos en la mitad derecha
+    \ei
+    \item<3-> Hacemos lo mismo en las mitades más pequeñas hasta encontrar el número o hasta que no queden más elementos
+    \item<4-> Primero hay $n$ candidatos, luego $\frac{n}{2}$, luego $\frac{n}{4}$, etc.
+    \item<4-> $O(\log n)$
+  \ei
+\end{frame}
+
+\begin{frame}{Problema de ejemplo}
+  $val = 22$
+
+  \vspace{20pt}
+
+  \begin{center}
+    \begin{overprint}
+      \onslide<1>\begin{tabular}{|ccccccccccccc|}
+        \;1 & \;4 & \;5 & \;8 & 11 & 19 & \color{vhilight}{21} & 22 & 25 & 29 & 31 & 37 & 42 \\
+        \hline
+        lo &  &  &  &  &  & \color{vhilight}{m} &  &  &  &  &  & hi \\
+      \end{tabular}
+      \onslide<2>\begin{tabular}{ccccccc|cccccc|}
+        \;1 & \;4 & \;5 & \;8 & 11 & 19 & 21 & 22 & 25 & \color{vhilight}{29} & \color{vhilight}{31} & 37 & 42 \\
+        \hline
+        \x & \x & \x & \x & \x & \x & \x & lo & & \color{vhilight}{m} & \color{vhilight}{m} & & hi \\
+      \end{tabular}
+      \onslide<3>\begin{tabular}{ccccccc|cccccc|}
+        \;1 & \;4 & \;5 & \;8 & 11 & 19 & 21 & 22 & 25 & \color{vhilight}{29} & 31 & 37 & 42 \\
+        \hline
+        \x & \x & \x & \x & \x & \x & \x & lo & & \color{vhilight}{m} & & & hi \\
+      \end{tabular}
+      \onslide<4>\begin{tabular}{ccccccc|cc|cccc}
+        \;1 & \;4 & \;5 & \;8 & 11 & 19 & 21 & \color{vhilight}{22} & 25 & 29 & 31 & 37 & 42 \\
+        \hline
+        \x & \x & \x & \x & \x & \x & \x & lo & hi & \x & \x & \x & \x \\
+         &  &  &  &  &  &  & \color{vhilight}{m} &  &  &  &  &  \\
+      \end{tabular}
+      \onslide<5>\begin{tabular}{ccccccc|cc|cccc}
+        \;1 & \;4 & \;5 & \;8 & 11 & 19 & 21 & \textbf{\color{teal}{22}} & 25 & 29 & 31 & 37 & 42 \\
+        \hline
+        \x & \x & \x & \x & \x & \x & \x & lo & hi & \x & \x & \x & \x \\
+         &  &  &  &  &  &  & \color{vhilight}{m} &  &  &  &  &  \\
+      \end{tabular}
+    \end{overprint}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Problema de ejemplo}
+  $val = 23$
+
+  \vspace{20pt}
+
+  \begin{center}
+    \begin{overprint}
+      \onslide<1>\begin{tabular}{|ccccccccccccc|}
+        \;1 & \;4 & \;5 & \;8 & 11 & 19 & \color{vhilight}{21} & 22 & 25 & 29 & 31 & 37 & 42 \\
+        \hline
+        lo &  &  &  &  &  & \color{vhilight}{m} &  &  &  &  &  & hi \\
+      \end{tabular}
+      \onslide<2>\begin{tabular}{ccccccc|cccccc|}
+        \;1 & \;4 & \;5 & \;8 & 11 & 19 & 21 & 22 & 25 & \color{vhilight}{29} & 31 & 37 & 42 \\
+        \hline
+        \x & \x & \x & \x & \x & \x & \x & lo & & \color{vhilight}{m} & & & hi \\
+      \end{tabular}
+      \onslide<3>\begin{tabular}{ccccccc|cc|cccc}
+        \;1 & \;4 & \;5 & \;8 & 11 & 19 & 21 & \color{vhilight}{22} & 25 & 29 & 31 & 37 & 42 \\
+        \hline
+        \x & \x & \x & \x & \x & \x & \x & lo & hi & \x & \x & \x & \x \\
+         &  &  &  &  &  &  & \color{vhilight}{m} &  &  &  &  &  \\
+      \end{tabular}
+      \onslide<4>\begin{tabular}{cccccccc|c|cccc}
+        \;1 & \;4 & \;5 & \;8 & 11 & 19 & 21 & 22 & \color{vhilight}{25} & 29 & 31 & 37 & 42 \\
+        \hline
+        \x & \x & \x & \x & \x & \x & \x & \x & lo & \x & \x & \x & \x \\
+         &  &  &  &  &  &  &  & hi &  &  &  &  \\
+         &  &  &  &  &  &  &  & \color{vhilight}{m} &  &  &  &  \\
+      \end{tabular}
+      \onslide<5>\begin{tabular}{ccccccccccccc}
+        \;1 & \;4 & \;5 & \;8 & 11 & 19 & 21 & 22 & 25 & 29 & 31 & 37 & 42 \\
+        \hline
+        \x & \x & \x & \x & \x & \x & \x & \x & \x & \x & \x & \x & \x \\
+         &  &  &  &  &  &  & \color{red}{hi} & \color{red}{lo} & &  &  &  \\
+      \end{tabular}
+    \end{overprint}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Problema de ejemplo}
+  \begin{minted}{cpp}
+    ... // leer n, val, arreglo a
+    int lo = 0, hi = n-1;
+    int res = -1;
+    while (lo <= hi) {
+      int mid = (lo + hi) / 2;
+      if (a[mid] == val) {
+        res = mid;
+        break;
+      }
+      else if (val < a[mid]) {
+        hi = mid - 1;
+      }
+      else { // val > a[mid]
+        lo = mid + 1;
+      }
+    }
+    // val esta en la posicion res, -1 si no esta
+  \end{minted}
+\end{frame}
+
+\begin{frame}{Forma general}
+  \bi
+    \item Trabajar sobre un rango de enteros
+    \item $
+      f(x) = \begin{cases}
+        1 & \text{si } x \text{ cumple la propiedad} \\
+        0 & \text{si } x \text{ \textbf{no} cumple la propiedad}
+      \end{cases}
+    $
+    \item $f(x)$ es monótona $\star$
+  \ei
+
+  \onslide<2->\begin{center}
+    \begin{tabular}{cc}
+      $val = 22$ & $
+      f(x) = \begin{cases}
+        1 & \text{si } x \geq val \\
+        0 & \text{si } x < val
+      \end{cases}
+    $
+    \end{tabular}
+  \end{center}
+  
+  \onslide<2->\begin{center}
+    \begin{tabular}{ccccccccccccccccccc}
+      \;1 & \;4 & \;5 & \;8 & 11 & 19 & 21 & 22 & 25 & 29 & 31 & 37 & 42 \\
+      \hline
+      0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 1 & 1 & 1 \\
+    \end{tabular}
+  \end{center}
+
+  \bi
+    \onslide<3->\item Podemos buscar el primer 1 o el último 0
+  \ei
+\end{frame}
+
+\begin{frame}[fragile]{Forma general}
+  \begin{minted}{cpp}
+    int lo = 0, hi = n-1;
+    int res = -1;
+    while (lo <= hi) {
+      int mid = (lo + hi) / 2;
+      if (f(mid) == 1) {
+        res = mid; // mejor respuesta hasta ahora
+        hi = mid - 1;
+      }
+      else { // f(mid) == 0
+        lo = mid + 1;
+      }
+    }
+    // Primer 1 esta en la posicion res
+  \end{minted}
+\end{frame}
+
+\begin{frame}{Forma general}
+  $val = 25$
+
+  \vspace{20pt}
+
+  \begin{center}
+    \begin{overprint}
+      \onslide<1>\begin{tabular}{|ccccccccccccc|}
+        \;1 & \;4 & \;5 & \;8 & 11 & 19 & \color{vhilight}{21} & 22 & 25 & 29 & 31 & 37 & 42 \\
+        \hline
+        lo &  &  &  &  &  & \color{vhilight}{m} &  &  &  &  &  & hi \\
+      \end{tabular}
+      \onslide<2>\begin{tabular}{ccccccc|cccccc|}
+        \;1 & \;4 & \;5 & \;8 & 11 & 19 & 21 & 22 & 25 & \color{vhilight}{29} & 31 & 37 & 42 \\
+        \hline
+        \x & \x & \x & \x & \x & \x & \x & lo & & \color{vhilight}{m} & & & hi \\
+         & & &  &  & &  & & & \color{vhilight}{res} & & &  \\
+      \end{tabular}
+      \onslide<3>\begin{tabular}{ccccccc|cc|cccc}
+        \;1 & \;4 & \;5 & \;8 & 11 & 19 & 21 & \color{vhilight}{22} & 25 & 29 & 31 & 37 & 42 \\
+        \hline
+        \x & \x & \x & \x & \x & \x & \x & lo & hi & \x & \x & \x & \x \\
+         &  &  &  &  &  &  & \color{vhilight}{m} &  &  &  &  &  \\
+         & & &  &  & &  & & & \color{vhilight}{res} & & &  \\
+      \end{tabular}
+      \onslide<4>\begin{tabular}{cccccccc|c|cccc}
+        \;1 & \;4 & \;5 & \;8 & 11 & 19 & 21 & 22 & \color{vhilight}{25} & 29 & 31 & 37 & 42 \\
+        \hline
+        \x & \x & \x & \x & \x & \x & \x & \x & lo & \x & \x & \x & \x \\
+         &  &  &  &  &  &  &  & hi &  &  &  &  \\
+         &  &  &  &  &  &  &  & \color{vhilight}{m} &  &  &  &  \\
+         & & &  &  & &  & & \color{vhilight}{res} & \sout{res} & & &  \\
+      \end{tabular}
+      \onslide<5>\begin{tabular}{ccccccccccccc}
+        \;1 & \;4 & \;5 & \;8 & 11 & 19 & 21 & 22 & \color{teal}{25} & 29 & 31 & 37 & 42 \\
+        \hline
+        \x & \x & \x & \x & \x & \x & \x & \x & \x & \x & \x & \x & \x \\
+         &  &  &  &  &  &  & \color{red}{hi} & \color{red}{lo} &  &  &  &  \\
+         & & &  &  & &  & & \color{teal}{res} & \sout{res} & & &  \\
+      \end{tabular}
+    \end{overprint}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Problema de ejemplo}
+  Tenemos un arreglo $a$ que contiene $n$ enteros.
+
+  Se deben responder $q$ consultas de la forma: Dados dos valores $l$ y $r$, 
+  ¿cuantos elementos del arreglo $a$ están en el rango $[l, r]$?
+
+  \bi
+    \item<2-> No hay ninguna restriccion sobre el orden de los elementos. Podemos ordenar el arreglo para 
+    encontrar una función monótona
+    \item<3-> Para encontrar limite izquierdo, buscamos el primer elemento mayor o igual que $l$
+    \item<3-> Función monótona $0, 0, ..., 0, 0, 0, 1, 1, 1, ...$
+    \item<4-> Para encontrar el limite derecho, buscamos el ultimo elemento menor o igual que $r$
+    \item<4-> Función monótona $1, 1, ..., 1, 1, 1, 0, 0, 0, ...$
+  \ei
+\end{frame}
+
+\begin{frame}{Problema de ejemplo}
+  Tenemos $n$ piezas rectangulares de tamaño $a \times b$. 
+  ¿Cuál es el tamaño más pequeño que puede tener el lado de un cuadrado que contenga a todas las piezas?
+
+  Las piezas no se pueden rotar ni superponer. El tamaño del cuadrado debe ser entero.
+
+  \bi
+    \item<2-> Si las $n$ piezas entran en un cuadrado de lado $x$, entrarán en uno de lado $x+1$
+    \item<2-> Si las $n$ piezas no entran en un cuadrado de lado $x$, no entrarán en uno de lado $x-1$
+    \item<3-> Función monótona $0, 0, ..., 0, 0, 0, 1, 1, 1, ...$
+    \item<4-> A esta forma de aplicar búsqueda binaria se le llama \textbf{binary search the answer}.
+  \ei
+\end{frame}
+
+\begin{frame}{Problema de ejemplo}
+  Un cuadrado de $x \cdot x$ puede:
+  \bi
+    \item acomodar $\lfloor \frac{x}{a} \rfloor$ piezas de un lado
+    \item acomodar $\lfloor \frac{x}{b} \rfloor$ piezas del otro lado
+  \ei
+  \begin{center}
+    \ig[width=0.6\textwidth]{ejemploCuadrado.png}
+  \end{center}
+  \begin{center}
+    $
+      f(x) = \begin{cases}
+        1 & \text{si } \lfloor \frac{x}{a} \rfloor \cdot \lfloor \frac{x}{b} \rfloor \geq n \\
+        0 & \text{si } \lfloor \frac{x}{a} \rfloor \cdot \lfloor \frac{x}{b} \rfloor < n
+      \end{cases}
+    $
+  \end{center}
+\end{frame}
+
+\begin{frame}{Problema de ejemplo}
+  Tenemos $n$ cuerdas, cada una de largo $l_i$. Necesitamos $k$ cuerdas del mismo tamaño.
+
+  ¿Cual es el largo mas grande que pueden tener las $k$ cuerdas si podemos cortar las cuerdas 
+  originales de la forma que queramos?
+
+  La respuesta se considera correcta si el error relativo o absoluto no es mayor a \textbf{$10^{-6}$}
+
+  \bi
+    \item<2-> Imaginemos que $x$ es la respuesta optima
+    \item<3-> Podremos obtener $k$ o mas cuerdas si las cortamos de largo \textbf{menor} que $x$
+    \item<3-> Es imposible obtener $k$ o mas cuerdas si las cortamos de largo \textbf{mayor} que $x$
+    \item<4-> La funcion es monótona $..., 1, 1, 0, 0, ...$ sobre un rango \textbf{continuo}
+  \ei
+\end{frame}
+
+\begin{frame}{Problema de ejemplo}
+  \begin{center}
+      \begin{tabular}{|l|l|}
+          \hline
+          {\footnotesize Input de ejemplo} & {\footnotesize Output de ejemplo} \\
+          \hline
+          \begin{minipage}{80pt}
+\vspace{10pt}
+\ttfamily
+4 11\\
+802\\
+743\\
+457\\
+539\\
+          \end{minipage}
+&
+\begin{minipage}{80pt}
+\vspace{10pt}
+\ttfamily
+200.5\\
+\end{minipage}
+\\
+          \hline
+      \end{tabular}
+  \end{center}
+
+\bi
+  \item Se pueden obtener al menos 11 cuerdas de largo $200.5$
+  \item<2-> Tambien se pueden obtener al menos 11 cuerdas de largo $200.4$, $200.45$, $200.499999$, etc.
+  \item<3-> No es necesario que la respuesta sea exacta, pero debe ser un valor muy cercano.
+\ei
+
+\end{frame}
+
+\begin{frame}[fragile]{Problema de ejemplo}
+  \begin{minted}{cpp}
+    ... // leer n, k, arreglo l
+    double lo = 0, hi = cuerdaMasLarga;
+    double res = -1;
+    while (lo <= hi) {
+      double mid = (lo + hi) / 2;
+      int cuerdas = 0;
+      for (int i = 0; i < n; i++) {
+        cuerdas += floor(l[i] / mid);
+      }
+      if (cuerdas >= k) {
+        res = mid;
+        lo = mid + ???;
+      }
+      else {
+        hi = mid - ???;
+      }
+    }
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Problema de ejemplo}
+  \begin{minted}{cpp}
+    ... // leer n, k, arreglo l
+    double lo = 0, hi = cuerdaMasLarga;
+    for (int aux = 0; aux < 50; aux++) {
+      double mid = (lo + hi) / 2;
+      int cuerdas = 0;
+      for (int i = 0; i < n; i++) {
+        cuerdas += floor(l[i] / mid);
+      }
+      if (cuerdas >= k) lo = mid;
+      else hi = mid;
+    }
+  \end{minted}
+  \bi
+    \item<2-> Cada iteracion reduce el rango de posibilidades a la mitad
+    \item<3-> Luego de 50 iteraciones, el rango sera $\frac{maxCuerda}{2^{50}}$
+    \item<4-> Probablemente suficientemente preciso
+  \ei
+\end{frame}
+
+\end{document}
