@@ -1,0 +1,356 @@
+\documentclass[10pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usetheme{metropolis}
+\usepackage{booktabs}
+\usepackage[scale=2]{ccicons}
+\usepackage{pgfplots}
+\usepgfplotslibrary{dateplot}
+\usepackage{xspace}
+\usepackage{pbox}
+\usepackage[normalem]{ulem}
+\usepackage{soul}
+
+% graphics path
+\graphicspath{{./images/}}
+
+% a few macros
+\newcommand{\bi}{\begin{itemize}}
+\newcommand{\ei}{\end{itemize}}
+\newcommand{\ig}{\includegraphics}
+\newcommand{\x}{\color{red}{$\times$}}
+\definecolor{hilight}{RGB}{235,129,27}
+\definecolor{vhilight}{RGB}{235,129,27}
+\newcommand{\colr}[1]{\color{red}{#1}}
+
+% title info
+\title{Combinatoria}
+\author{Miguel Ortiz}
+\institute{Octubre 2023}
+\date{\textbf{Programación competitiva para ICPC}}
+
+% Tikz
+\usepackage{tikz}
+\usetikzlibrary{arrows,shapes}
+
+% Minted
+\usepackage{minted}
+\usemintedstyle{manni}
+\newminted{cpp}{fontsize=\footnotesize}
+
+% Graph styles
+\tikzstyle{vertex}=[circle,fill=black!50,minimum size=15pt,inner sep=0pt, font=\small]
+\tikzstyle{selected vertex} = [vertex, fill=red!24]
+\tikzstyle{edge} = [draw,thick,-]
+\tikzstyle{dedge} = [draw,thick,->]
+\tikzstyle{weight} = [font=\scriptsize,pos=0.5]
+\tikzstyle{selected edge} = [draw,line width=2pt,-,red!50]
+\tikzstyle{ignored edge} = [draw,line width=5pt,-,black!20]
+\tikzstyle{vertex1} = [vertex, fill=red]
+\tikzstyle{vertex2} = [vertex, fill=blue]
+\tikzstyle{vertex3} = [vertex, fill=green, text=black]
+\tikzstyle{vertex4} = [vertex, fill=yellow, text=black]
+\tikzstyle{vertex5} = [vertex, fill=pink, text=black]
+\tikzstyle{vertex6} = [vertex, fill=purple]
+
+\tikzset{
+  treenode/.style = {align=center, inner sep=0pt, text centered,
+    font=\sffamily},
+  vertex/.style = {treenode, circle, black, font=\sffamily\bfseries\tiny, draw=black, text width=1.8em},% arbre rouge noir, noeud noir
+  rvertex/.style = {treenode, circle, black, font=\sffamily\bfseries\tiny, draw=red, text width=1.8em},% arbre rouge noir, noeud noir
+}
+
+
+\begin{document}
+\maketitle
+
+\section{Introducción}
+
+\begin{frame}{Introducción}
+  \bi
+    \item \textbf{Combinatoria} es el estudio de estructuras discretas contables
+    \item En competencias, los problemas de combinatoria se reducen a:
+      \bi
+        \item "Contar [Objeto que cumple propiedad]"
+        \item "¿De cuántas formas se puede [Formar objeto que cumple propiedad]?"
+        \item etc.
+      \ei 
+    \item Ejemplo: ¿Cuántas palabras de 4 letras se pueden formar con las letras A, B, C, ..., Z (26 letras)? Se permiten letras repetidas
+    \item<2-> Usualmente, enumerar los objetos uno por uno es muy lento
+  \ei
+\end{frame}
+
+\begin{frame}[fragile]{Introducción}
+  \begin{minted}{cpp}
+    int cnt = 0;
+    for (char i = 'A'; i <= 'Z'; i++) {
+      for (char j = 'A'; j <= 'Z'; j++) {
+        for (char k = 'A'; k <= 'Z'; k++) {
+          for (char l = 'A'; l <= 'Z'; l++) {
+            cnt++;
+          }
+        }
+      }
+    }
+  \end{minted}
+  \onslide<2->\bi
+    \item $\alpha = $ tamaño del alfabeto
+    \item $O(\alpha^4)$
+    \item<3-> ¿Y si pidieran palabras de 10 letras?
+    \item<4-> ¿O de $10^{18}$ letras módulo $10^9+7$
+  \ei
+\end{frame}
+
+\begin{frame}{Introducción}
+  \bi
+    \item El código de la solución es usualmente corto (aplicar una fórmula)
+    \item Encontrar la fórmula es la parte difícil
+    \item<2-> ¡Usen lápiz y papel!
+  \ei
+\end{frame}
+
+\section{Colecciones}
+
+\begin{frame}{Set}
+  \bi
+    \item Conjunto de elementos no repetidos
+    \item El orden no importa
+    \item Se lo representa como sus elementos separados por comas y entre llaves
+    \bi
+      \item $\{M, A, T, E\}$
+      \item $\{1, 2, 3\}$ = $\{3, 1, 2\}$
+      \item $\{1, 3, 3\}$ \textbf{no} es un set
+    \ei
+  \ei
+\end{frame}
+
+\begin{frame}{Multiset}
+  \bi
+    \item Conjunto de elementos, pueden repetirse
+    \item El orden no importa
+    \item Se lo representa como sus elementos separados por comas y entre llaves
+    \bi
+      \item $\{F, F, T\}$
+      \item $\{1, 2, 3\} = \{3, 1, 2\}$
+      \item $\{1, 3, 3\}$
+    \ei
+  \ei
+\end{frame}
+
+\begin{frame}{Listas}
+  \bi
+    \item Secuencia de elementos, puede haber repetidos
+    \item El orden \textbf{si} importa
+    \item Se lo representa como sus elementos separados por comas y entre paréntesis
+    \bi
+      \item $(7, 7, 4, 9, 5, 5, 2, 6)$
+      \item $(A, M, O, R) \neq (R, O, M, A)$
+      \item $(\{5, 2\}, \{3, 7\}) = (\{2, 5\}, \{7, 3\})$
+    \ei
+  \ei
+\end{frame}
+
+\section{Principio de multiplicación}
+
+\begin{frame}{Principio de multiplicación}
+  Si, al formar una lista de tamaño $n$, hay $a_1$ posibilidades para elegir el primer elemento,
+  $a_2$ posibilidades para elegir el segundo elemento, ..., $a_n$ posibilidades para elegir el 
+  elemento $n$. Entonces hay $a_1 \cdot a_2 \cdots a_n$ listas posibles.
+
+  \vspace{20pt}
+  \onslide<2->{
+  Si $n$ eventos ocurren al mismo tiempo, y el evento $i$ puede ocurrir de $a_i$ formas, entonces
+  el número total de formas en que los eventos pueden ocurrir es $a_1 \cdot a_2 \cdots a_n$.
+  }
+\end{frame}
+
+\begin{frame}{Principio de multiplicación}
+  ¿Cuantas listas podemos formar con 3 elementos, si el primer elemento pertenece
+  al set $\{a, b, c\}$, el segundo a $\{5, 7\}$ y el tercero a $\{a, x\}$?
+  \bi
+    \item $(a, 5, a)$ y $(c, 7, x)$ son listas válidas
+    \item<2-> Podemos visualizar las posibilidades como un árbol
+  \ei
+\end{frame}
+
+\begin{frame}{Principio de multiplicación}
+  \begin{center}
+    \ig[height=0.75\textheight]{list3Tree.png}
+    \bi
+      \item<2-> Respuesta: $3 \cdot 2 \cdot 2 = 12$ listas
+    \ei
+  \end{center}
+\end{frame}
+
+\begin{frame}{Principio de multiplicación}
+  ¿Cuántas listas de tamaño 4 podemos formar con elementos del set $\{a, b, c, d\}$ sin repetir letras?
+
+  \bi
+    \item $(a, b, c, d)$ y $(d, c, b, a)$ son listas válidas
+    \item $(a, a, b, c)$ y $(a, b, c, c)$ no son listas válidas
+  \ei
+\end{frame}
+
+\begin{frame}{Principio de Multiplicación}
+  \begin{columns}[T] % align columns
+    \begin{column}{.6\textwidth}
+        \ig[width=\textwidth]{list4Tree.png}
+    \end{column}
+
+    \begin{column}{.4\textwidth}
+        \vspace{20pt}
+
+        \bi
+          \item Primero tenemos 4 opciones, luego 3, luego 2, luego 1
+          \item<2-> $4 \cdot 3 \cdot 2 \cdot 1 = 24$ listas
+        \ei
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Ejercicio}
+  Utilizando letras del set $\{T, H, E, O, R, Y\}$ y permitiendo letras repetidas:
+  \bi
+    \item ¿Cuántas palabras de 4 letras podemos formar?
+    \bi
+      \item<2-> $6 \cdot 6 \cdot 6 \cdot 6 = 6^4 = 1296$
+    \ei
+    \item ¿Cuántas palabras de 4 letras podemos formar que empiecen con la letra $T$?
+    \bi
+      \item<3-> $1 \cdot 6 \cdot 6 \cdot 6 = 216$
+    \ei
+    \item ¿Cuántas palabras de 4 letras podemos formar que \textbf{no} empiecen con $T$?
+    \bi
+      \item<4-> $5 \cdot 6 \cdot 6 \cdot 6 = 1080$
+    \ei
+    \item ¿Cuántas palabras de 4 letras podemos formar de modo que no existan dos letras juntas que sean iguales?
+    \bi
+      \item<5-> $6 \cdot 5 \cdot 5 \cdot 5 = 750$
+    \ei
+  \ei
+\end{frame}
+
+\begin{frame}{Ejercicio}
+  Una pensión tiene el siguiente menú para el almuerzo:
+  \bi
+    \item Sopa: cabellos de ángel, sopa de maní
+    \item Segundo: falso conejo, milanesa, albóndigas
+  \ei
+  ¿Cuál es la máxima cantidad de días seguidos que se puede comer en la pensión sin repetir un almuerzo?
+  \bi
+    \item<2-> Cada día queremos una combinación distinta de (sopa, segundo)
+    \item<2-> $2 \cdot 3 = 6$ combinaciones posibles, máxima cantidad de días
+  \ei
+\end{frame}
+
+\section{Principio de adición y sustracción}
+
+\begin{frame}{Principio de adición}
+  Suponiendo que un set $X$ puede ser descompuesto como $X = X_1 \cup X_2 \cup \cdots \cup X_n$,
+  donde $X_i \cap X_j = \emptyset$ para $i \neq j$. Entonces $|X| = |X_1| + |X_2| + \cdots + |X_n|$.
+
+  \begin{center}
+    \ig[width=\textwidth]{additionSet.png}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Principio de adición}
+  Utilizando letras del set $\{T, H, E, O, R, Y\}$ y permitiendo letras repetidas, 
+  ¿cuántas palabras de 4 letras podemos formar que contengan \textit{exactamente} una $E$?
+
+  \onslide<2->\bi
+    \item Podemos dividir las palabras en 4 tipos (sets):
+    \item $E\_\_\_$ | $\_E\_\_$ | $\_\_E\_$ | $\_\_\_E$
+    \item Ningún set interseca a otro, y su unión es el set de todas las palabras
+    \item<3-> $5^3 + 5^3 + 5^3 + 5^3 = 500$
+  \ei
+\end{frame}
+
+\begin{frame}{Principio de adición}
+  ¿Cuántos números \textbf{pares} de 3 dígitos existen que contengan \textit{exactamente} un $6$ 
+  y no empiecen con $0$?
+
+  \onslide<2->\bi
+    \item Podemos dividir las palabras en 3 tipos (sets):
+    \item $6\_\_$ | $\_6\_$ | $\_\_6$
+    \item Ningún set interseca a otro, y su unión es el set de todos los números
+    \item<3-> $|X_1| = 1 \cdot 9 \cdot 4 = 36$
+    \item<3-> $|X_2| = 8 \cdot 1 \cdot 4 = 32$
+    \item<3-> $|X_3| = 8 \cdot 9 \cdot 1 = 72$
+    \item<4-> $|X| = |X_1| + |X_2| + |X_3| = 140$
+  \ei
+\end{frame}
+
+\begin{frame}{Principio de sustracción}
+  Si un  $X$ es subset de un set finito $U$ (universo), entonces $|\overline{X}| = |U| - |X|$.
+
+  \bi
+    \item<2-> $U$ es el set que contiene todas las posibilidades
+    \item<2-> $X$ es el set que contiene las posibilidades que no queremos
+  \ei
+\end{frame}
+
+\begin{frame}{Principio de sustracción}
+  Utilizando letras del set $\{T, H, E, O, R, Y\}$ y permitiendo letras repetidas, 
+  ¿cuántas palabras de 4 letras podemos formar que contengan \textit{al menos} una $E$?
+
+  \bi
+    \item<2-> Podemos dividir las palabras en \textit{muchos} tipos (sets)
+    \item<2-> Fijando las posiciones de las $E$s y restringiendo las otras letras para que no sean $E$
+    \item<2-> $E\_\_\_$ | $\_E\_\_$ | $\_\_E\_$ | $\_\_\_E$ | $EE\_\_$ | $E\_E\_$ ...
+    \item<3-> Muchas posibilidades...
+    \item<4-> Es más fácil contar las palabras que \textit{no} contienen ninguna $E$
+    \item<4-> $|U| = 6^4, |X| = 5^4 \rightarrow |\overline{X}| = 6^4 - 5^4$
+    \item<4-> Hay $671$ palabras que contienen al menos una $E$
+  \ei
+\end{frame}
+
+\begin{frame}{Ejercicio}
+  Si una contraseña debe ser formada solamente por letras del alfabeto ingles (26 letras) 
+  y debe tener exactamente 5 letras
+
+  \bi
+    \item ¿Cuántas contraseñas existen si al menos una letra debe ser mayúscula?
+    \bi
+      \item<2-> $(2 \cdot 26)^5 - 26^5 = 368322656$
+    \ei
+    \item ¿Cuántas contraseñas existen si al menos una letra debe ser mayúscula y al menos una letra debe ser minúscula?
+    \bi
+      \item<3-> $(2 \cdot 26)^5 - 26^5 - 26^5 = 356441280$
+    \ei
+  \ei
+\end{frame}
+
+\section{Permutaciones y subsets}
+
+\begin{frame}{Permutaciones}
+  \bi
+    \item Una lista es una permutación de otras si tienen los mismos elementos pero en diferente orden
+    \item Ejemplo: $(1, 2, 3)$ es una permutación de $(3, 2, 1)$
+    \item<2-> Podemos calcular el número de permutaciones de una lista de tamaño $n$ con el principio de multiplicación
+    \item<2-> Hay $n$ opciones para el primer elemento, $n - 1$ para el segundo, $n - 2$ para el tercero, etc.
+    \item<3-> $n!$ permutaciones
+  \ei
+\end{frame}
+
+\begin{frame}{Subsets}
+  \bi
+    \item Un subset es un set que contiene cero o más elementos de otro set
+    \item Ejemplo: $\{1, 2\}$ y $\{3, 1\}$ son subsets de $\{1, 2, 3\}$
+    \item<2-> Podemos calcular el número de subsets de un set de tamaño $n$ con el principio de multiplicación
+    \item<2-> Usualmente queremos calcular el número de subsets que tengan $k$ elementos de un set de tamaño $n$
+    \item<3-> \huge{$\frac{n!}{k! \cdot (n-k)!}$ = $\binom{n}{k}$}
+  \ei
+\end{frame}
+
+\begin{frame}{Ejercicio}
+  Teniendo 6 tipos de fruta y 4 toppings, ¿cuántas ensaladas de fruta distintas se pueden hacer 
+  mezclando 3 frutas distintas y 2 toppings distintos?
+
+  \bi
+    \item<2-> Como todo se mezcla, no importa el orden
+    \item<3-> $\binom{6}{3} \cdot \binom{4}{2} = 120$
+  \ei
+\end{frame}
+
+\end{document}
